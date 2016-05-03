@@ -50,6 +50,7 @@ func main() {
 		UrlFrom: opts.Source,
 		UrlTo: opts.Destination,
 		Threads: opts.Concurrency,
+		Debug: opts.Debug,
 	})
 
 	// Copy the layers + manifest

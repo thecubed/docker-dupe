@@ -198,30 +198,31 @@ func (dupe *Dupe) copyLayer(index int, layer manifest.FSLayer) {
 	if !exists {
 		// Destination registry doesn't have layer, upload it
 		src_reader, src_len, err := dupe.from.DownloadLayerLength(dupe.manifestName, layer.BlobSum)
-		if src_reader != nil {
-			defer src_reader.Close()
-		} else if err != nil {
+		if err != nil {
 			dupe.log.Fatalf("Unable to create reader, err: %s", err)
+		} else if src_reader != nil {
+			//defer src_reader.Close()
+			progress := func(progress, total int64) string {
+				bar := ioprogress.DrawTextFormatBar(20)
+				return fmt.Sprintf("Uploading layer %s : %s %s",
+					layer.BlobSum,
+					bar(progress, total),
+					ioprogress.DrawTextFormatBytes(progress, total))
+			}
+
+			progress_reader := &ioprogress.Reader{
+				Reader: src_reader,
+				Size:   src_len,
+				DrawFunc:     ioprogress.DrawTerminalf(os.Stderr, progress),
+			}
+
+			// Upload to dest
+			dupe.to.UploadLayer(dupe.manifestName, layer.BlobSum, progress_reader)
+
+			src_reader.Close()
 		} else {
-			dupe.log.Fatalf("Reader was nil? %s", src_reader)
+			dupe.log.Fatal("Reader was nil? Can't continue...")
 		}
-
-		progress := func(progress, total int64) string {
-			bar := ioprogress.DrawTextFormatBar(20)
-			return fmt.Sprintf("Uploading layer %s : %s %s",
-				layer.BlobSum,
-				bar(progress, total),
-				ioprogress.DrawTextFormatBytes(progress, total))
-		}
-
-		progress_reader := &ioprogress.Reader{
-			Reader: src_reader,
-			Size:   src_len,
-			DrawFunc:     ioprogress.DrawTerminalf(os.Stderr, progress),
-		}
-
-		// Upload to dest
-		dupe.to.UploadLayer(dupe.manifestName, layer.BlobSum, progress_reader)
 	} else {
 		// Layer exists, go to next one
 		dupe.log.Printf("Skipping %s", layer.BlobSum)

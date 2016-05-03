@@ -1,7 +1,8 @@
 package dupe
 
 import (
-	"github.com/heroku/docker-registry-client/registry"
+	// Use my local fork of the Heroku docker-registry-client project
+	"github.com/thecubed/docker-registry-client/registry"
 	"github.com/mitchellh/ioprogress"
 	manifest "github.com/docker/distribution/manifest/schema1"
 	//"github.com/docker/distribution/digest"

@@ -11,6 +11,8 @@ This will take a long time, consume a lot of local disk space, and it requires y
 
 Docker Dupe copies directly from registry to registry with no local storage necessary.
 
+Manifests are kept unmodified, and signed with their original signature to preserve chain of trust.
+
 ## How to use
 Simply run docker-dupe with the parameters you wish to use, and off it'll go:
 ```

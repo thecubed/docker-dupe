@@ -92,12 +92,12 @@ func New(config *DupeConfig) *Dupe {
 	dupe.log.Printf("Connecting to source registry %s", config.UrlFrom)
 	dupe.from, err = registry.New(config.UrlFrom, config.UserFrom, config.PasswordFrom)
 	if err != nil {
-		dupe.log.Fatalf("Unable to connect to source registry %s with error: %s", config.UrlTo, err)
+		dupe.log.Fatalf("Unable to connect to source registry %s with error: %s", config.UrlFrom, err)
 	}
 	dupe.log.Printf("Connecting to destination registry %s", config.UrlTo)
 	dupe.to, err = registry.New(config.UrlTo, config.UserTo, config.PasswordTo)
 	if err != nil {
-		dupe.log.Fatalf("Unable to connect to source registry %s with error: %s", config.UrlTo, err)
+		dupe.log.Fatalf("Unable to connect to destination registry %s with error: %s", config.UrlTo, err)
 	}
 
 	if !config.Debug {

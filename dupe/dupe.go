@@ -217,7 +217,10 @@ func (dupe *Dupe) copyLayer(index int, layer manifest.FSLayer) {
 			}
 
 			// Upload to dest
-			dupe.to.UploadLayer(dupe.manifestName, layer.BlobSum, progress_reader)
+			err := dupe.to.UploadLayer(dupe.manifestName, layer.BlobSum, progress_reader)
+			if err != nil {
+				dupe.log.Fatalf("Unable to upload layer, err: %s", err)
+			}
 
 			src_reader.Close()
 		} else {
